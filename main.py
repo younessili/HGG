@@ -57,8 +57,7 @@ def main():
 
     try:
         block_name = config["module_name"]  #set the block name to the "module name" entry in the json files
-        dimensions = config["dimensions"]
-        width, height = dimensions #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
+        width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
     except:
         print('There was an error in the config file!')
         sys.exit(1)    
