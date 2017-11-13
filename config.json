@@ -1,4 +1,11 @@
 {
 	"module_name": "router",
-	"dimensions": [4,4]
+	"dimensions": [4,4],
+	"port_names": 
+	{
+		"north": "up",
+		"south" : "down",
+		"east" : "right",
+		"west" : "left"	
+	}
 }
