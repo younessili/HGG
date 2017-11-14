@@ -1,6 +1,8 @@
 {
-	"module_name": "router",
-	"dimensions": [4,4],
+	"module_name": "arbiter",
+
+	"dimensions": [5,5],
+
 	"port_names": 
 	{
 		"north": "up",
