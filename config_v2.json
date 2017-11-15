@@ -1,0 +1,31 @@
+{
+	"module_name": "arbiter",
+
+	"dimensions": [5,5],
+
+	"port_names":
+	{
+		"north": "IC2",
+		"south" : "IC2",
+		"east" : "USB",
+		"west" : "USB"
+	},
+
+	"interfaces": {
+		"IC2" : {
+			"signals": {
+				"req": 1,
+				"ack": 1,
+				"data": 8
+			}
+		},
+		"USB": {
+			"signals": {
+				"req": 1,
+				"ack": 1,
+				"valid": 1,
+				"data": 16
+			}
+		}
+	}
+}
