@@ -1,26 +1,43 @@
 {
-	"module_name": "arbiter",
+	"module_name": "multiplexer",
 
-	"dimensions": [5,5],
+	"dimensions": [3,3],
 
 	"port_names":
 	{
-		"north": "IC2",
-		"south" : "IC2",
-		"east" : "USB",
-		"west" : "USB"
+		"north": "north",
+		"south" : "south",
+		"east" : "east",
+		"west" : "west"
 	},
 
-	"interfaces": {
-		"IC2" : {
-			"signals": {
+	"port_types":
+	{
+		"north": "data",
+		"south" : "beta",
+		"east" : "USB",
+		"west" : "US"
+	},
+
+	
+	"interfaces": 
+	{
+		"ID1" :
+		{
+			"name" : "IC1",
+			"signals": 
+			{
 				"req": 1,
 				"ack": 1,
 				"data": 8
 			}
 		},
-		"USB": {
-			"signals": {
+
+		"ID2": 
+		{	
+			"name" : "USB",
+			"signals": 
+			{
 				"req": 1,
 				"ack": 1,
 				"valid": 1,

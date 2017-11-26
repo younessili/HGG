@@ -1,5 +1,5 @@
 run: prepare_output
-	@ ./main.py config.json \
+	@ ./main.py config_v2.json \
 	>> output.log 2>&1
 
 prepare_output:
