@@ -1,48 +1,36 @@
 {
-	"module_name": "multiplexer",
-
-	"dimensions": [3,3],
-
-	"port_names":
-	{
-		"north": "north",
-		"south" : "south",
-		"east" : "east",
-		"west" : "west"
-	},
-
-	"port_types":
-	{
-		"north": "data",
-		"south" : "beta",
-		"east" : "USB",
-		"west" : "US"
-	},
-
-	
-	"interfaces": 
-	{
-		"ID1" :
-		{
-			"name" : "IC1",
-			"signals": 
-			{
-				"req": 1,
-				"ack": 1,
-				"data": 8
-			}
-		},
-
-		"ID2": 
-		{	
-			"name" : "USB",
-			"signals": 
-			{
-				"req": 1,
-				"ack": 1,
-				"valid": 1,
-				"data": 16
-			}
-		}
-	}
+    "module_name": "multiplexer",
+    "dimensions": [
+        3,
+        3
+    ],
+    "port_names": {
+        "north": "USB",
+        "south": "IC1",
+        "east": "east",
+        "west": "west"
+    },
+    "port_types": {
+        "north": "data",
+        "south": "beta",
+        "east": "USB",
+        "west": "US"
+    },
+    "interfaces": {
+        "IC1" : {
+            "signals": {
+                "req": 1,
+                "ack": 1,
+                "data": 8
+            }
+        },
+        "USB": {
+            "signals": {
+                "send": 1,
+                "receive": 1,
+                "valid": 1,
+                "data": 10
+            }
+        }
+    }
 }

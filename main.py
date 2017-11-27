@@ -22,10 +22,10 @@ def check_input(config_file_path):
         width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
         port_names = config["port_names"]
         port_types= config["port_types"]
-        interfaces = config ["interfaces"]["ID1"]
+        interfaces = config ["interfaces"]
 
-        
-        #add line to read the interfaces code from the config file. 
+
+        #add line to read the interfaces code from the config file.
 
         return (port_names, port_types,interfaces, block_name, width, height)
     except:
@@ -38,7 +38,7 @@ def generate_code(module_name, width, height, port_names,port_types,interfaces):
 
     port_names = port_names.values()
     port_type =  port_types.values()    #list comprehension
-    interface = interfaces.items()
+    # interface = interfaces.items()
 
 
     ######################list of segment definitions#############################
@@ -53,43 +53,83 @@ def generate_code(module_name, width, height, port_names,port_types,interfaces):
     print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
 
     ############## prints the port_type defiinitions#############
-    print "  --------------------input ports----------------------"
-   
-    
-    print port_names;
-    print port_type;
-    print interface;
+    print "//  --------------------input ports----------------------"
+
+
+    print "// %s" % port_names;
+    print "// %s" % port_type;
+    # print interface;
     print "\n"
 
-    
+
     port_type = ", ".join(port_type)
-    print  input_exp % (port_type); 
+    print  input_exp % (port_type);
        # print input_exp % (port_names[0],port_names[1],port_names[2]);
-  
-    print "  --------------------output ports----------------------"
+
+    print "//  --------------------output ports----------------------"
     print "  output my_out;"
 
     #############prints the port_data_type definitions###########
-    print "  --------------------input data types------------------"
+    print "//  --------------------input data types------------------"
     print "  wire up;"
-    print "  --------------------output data types-----------------"
-    print "  reg [3,0] my_out; \n"
+    print "  wire data[99:0];" ## TODO
+    print "//  --------------------output data types-----------------"
+    print "  reg [3:0] my_out; \n"
 
 
     ################### prints all the instansiations of the modules given the are ##############
-    print "  --------------------module instancces-----------------"
+    print "//  --------------------module instancces-----------------"
+
+    def create_port_def(mod_index, port_name, port_width):
+        # example call:
+        # create_port_def(0, "data", 8)
+        # returns:
+        # "data[7:0]"
+        # "data[15:8]"
+        # "data[23:16]"
+
+        start_bit = port_width * mod_index
+        end_bit = port_width * (mod_index+1) - 1
+
+        if start_bit == end_bit:
+            return "%s [%d]" % (port_name, start_bit)
+        else:
+            return "%s[%d:%d]" % (port_name, end_bit, start_bit)
+
+
+    def create_interface_def(mod_index, interface):
+        """Return a Verilog port declaration string representing the interface."""
+
+        if interface in interfaces:
+
+            signals = interfaces[interface]["signals"]
+
+            # indexed_keys = ["%s [%d]" % (key, mod_index) for key in keys]  # e.g. ["req[0]", "ack[0]", "data[0]"]
+            indexed_keys = []
+            for key, val in signals.iteritems():
+                indexed_key = create_port_def(mod_index, key, val)
+                indexed_keys.append(indexed_key)
+
+            return ", ".join(indexed_keys)
+
+        else:
+            return "%s [%d]" % (interface, mod_index)
+
 
     for n in range(total):
 
-        port_parts = ["%s [%d]" % (x, n) for x in port_names] # "up [0]", "down[0]", "right[0]"
+        port_parts = [create_interface_def(n, x) for x in port_names]
+        # port_parts = ["%s [%d]" % (x, n) for x in port_names] # "up [0]", "down[0]", "right[0]"
         port_def = ", ".join(port_parts)
+
+
         print str_def % (module_name, n, port_def)
         #prints all the block deffinitions accourding to the json file
         #1 string for name of block and 4 integers for the block increment
 
 
     ########### prints the connections (Assignments) between the module instances #########
-  
+
 
     print " \n //north to south"
     port_north = port_names [2]
@@ -119,7 +159,6 @@ def generate_code(module_name, width, height, port_names,port_types,interfaces):
 #####################################################################################
 
 
-    print "\n  end\n"
     ## module footer ##
     print "endmodule \n"
 
