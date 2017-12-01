@@ -1,35 +1,36 @@
 {
-    "module_name": "multiplexer",
+    "module_name": "router",
     "dimensions": [
-        3,
-        3
+        8,
+        8
     ],
     "port_names": {
-        "north": "USB",
-        "south": "IC1",
-        "east": "east",
-        "west": "west"
-    },
-    "port_types": {
-        "north": "data",
-        "south": "beta",
-        "east": "USB",
-        "west": "US"
+        "north": "clock",
+        "south": "reset",
+        "east": "RX",
+        "west": "TX",
+        "north_west": "Table"
     },
     "interfaces": {
-        "IC1" : {
+        "TX" : {
             "signals": {
-                "req": 1,
-                "ack": 1,
-                "data": 8
+                "tx_req": 1,
+                "tx_ack": 1,
+                "tx_data": 16
             }
         },
-        "USB": {
+        "RX": {
             "signals": {
-                "send": 1,
-                "receive": 1,
-                "valid": 1,
-                "data": 10
+                "rx_req": 1,
+                "rx_ack": 1,
+                "rx_data": 16
+            }
+        },
+        "Table": {
+            "signals": {
+                "table_addr": 4,
+                "table_data": 4
+                
             }
         }
     }
