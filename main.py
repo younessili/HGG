@@ -34,6 +34,8 @@ def generate_code(config_file_path):
             sys.exit(1)
         return (port_names,interfaces, module_name, width, height)  
 
+
+     
     ######################list of segment definitions#############################
     port_names, interfaces,module_name, width, height = check_input(config_file_path)
     area = width * height     #Area of the module
@@ -128,33 +130,40 @@ def generate_code(config_file_path):
                 n = row_shift + m
                 print str_con % (port_west, n, port_east, n+1)     
 
-    ############### prints the module header definition ####################
 
-    print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
+    def create_block_code():
+        ###################prints the module header definition ####################
 
-    ############## prints the port_type defiinitions#############
+        print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
 
-    print "//  --------------------input/output ports----------------------"
-    IO_parts = [create_IO_def(x) for x in port_names_values]   
+        ###################prints the IO defiinitions#############
 
-    #############prints the port_data_type definitions###########
-    print "//  --------------------input/output data types------------------"
+        print "//  --------------------input/output ports----------------------"
+        IO_parts = [create_IO_def(x) for x in port_names_values]   
 
-    print "\n"
+        ###################prints the port_data_type definitions###########
+        print "//  --------------------input/output data types------------------"
 
-    ################### prints all the instansiations of the modules given the are ##############
-    print "//  --------------------module instancces-----------------"
+        print "\n"
 
-    for n in range(area):
-        port_parts = [create_interface_def(n, x) for x in port_names_values]     
-        port_def = ", ".join(port_parts)
-        print str_def % (module_name, n, port_def)
-    print "\n//  --------------------module assignments-----------------"
-    create_module_assigmnet()
+        ################### prints all the instansiations of the modules given the area ##############
+        print "//  --------------------module instancces-----------------"
 
-    ## module footer ##
-    print "\n endmodule "
+        for n in range(area):
+            port_parts = [create_interface_def(n, x) for x in port_names_values]     
+            port_def = ", ".join(port_parts)
+            print str_def % (module_name, n, port_def)
 
+        
+        ################### prints all the module assignments ##############
+        print "\n//  --------------------module assignments-----------------"
+        create_module_assigmnet()
+
+        ## module footer ##
+        print "\n endmodule "
+
+    
+    create_block_code()
 ##############################################################################
 def main():
     """main function"""

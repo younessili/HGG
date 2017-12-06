@@ -78,5 +78,10 @@
                 "output":"table_addr"
             }
         }
+    },
+    "assignments":
+    {
+        "north":"south",
+        "east":"west"
     }
 }
