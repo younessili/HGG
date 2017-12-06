@@ -100,7 +100,34 @@ def generate_code(config_file_path):
                 print("error with config fiel IO declaration look for spelling mistakes")
                 sys.exit(1)
         
-      
+ 
+    def create_module_assigmnet():
+        """create module assignments based on the user prefered assignments."""
+        print " \n //north to south connections"
+
+        port_north = port_names ["north"] 
+        port_south = port_names ["south"]
+
+        shifts = [width*x for x in range(height-1)]
+        for row_shift in shifts:
+            print "\n    // Connector block (shift = %d):" % row_shift
+            for m in range(width):
+                n = row_shift + m
+                print str_con % (port_north, n, port_south, n+width)
+
+        print " \n //east to west connections"
+
+        port_west = port_names ["west"]
+        port_east = port_names ["east"]
+
+        column = [width*x for x in range(height)]
+
+        for row_shift in column:
+            print "\n    // Connector block (shift = %d):" % row_shift
+            for m in range(width-1):
+                n = row_shift + m
+                print str_con % (port_west, n, port_east, n+1)     
+
     ############### prints the module header definition ####################
 
     print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
@@ -122,41 +149,11 @@ def generate_code(config_file_path):
         port_parts = [create_interface_def(n, x) for x in port_names_values]     
         port_def = ", ".join(port_parts)
         print str_def % (module_name, n, port_def)
-        #prints all the block deffinitions accourding to the json file
-        #1 string for name of block and 4 integers for the block increment
-
-
-    ########### prints the connections (Assignments) between the module instances #########
-
-
-    print " \n //north to south connections"
-
-    port_north = port_names ["north"] 
-    port_south = port_names ["south"]
-
-    shifts = [width*x for x in range(height-1)]
-    for row_shift in shifts:
-        print "\n    // Connector block (shift = %d):" % row_shift
-        for m in range(width):
-            n = row_shift + m
-            print str_con % (port_north, n, port_south, n+width)
-
-    print " \n //east to west connections"
-
-    port_west = port_names ["west"]
-    port_east = port_names ["east"]
-
-    column = [width*x for x in range(height)]
-
-    for row_shift in column:
-        print "\n    // Connector block (shift = %d):" % row_shift
-        for m in range(width-1):
-            n = row_shift + m
-            print str_con % (port_west, n, port_east, n+1)
-
+    print "\n//  --------------------module assignments-----------------"
+    create_module_assigmnet()
 
     ## module footer ##
-    print "endmodule \n"
+    print "\n endmodule "
 
 ##############################################################################
 def main():
