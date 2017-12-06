@@ -38,10 +38,11 @@ def generate_code(config_file_path):
     port_names, interfaces,module_name, width, height = check_input(config_file_path)
     area = width * height     #Area of the module
     mod_name= "module %s();" #module header defiinition
-    input_exp = "  input %s;" 
-    output_exp = "  output %s;"
+    IO_type_exp = " %s [%d:%d] %s ;" #Input and output type expression
     str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     str_con = "     assign %s[%d] = %s[%d];"   #module connections#
+    port_names_values = port_names.values()
+
 
     ################## nested functions for module interface generation###########
     def create_port_def(mod_index, port_name, port_width):
@@ -67,8 +68,7 @@ def generate_code(config_file_path):
         if interface in interfaces:                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
             signals = interfaces[interface]["signals"]
-            #IO = interfaces[interface]["IO"]
-    
+        
 
             indexed_keys = []
             for key, val in signals.iteritems():
@@ -81,39 +81,39 @@ def generate_code(config_file_path):
             interface_exp = "%s" % (interface)
             return interface_exp
 
-#   def create_IO_def (interface):
+
+    def create_IO_def (interface):
         """Return the input and output port definitions """
 
-#           IO = interfaces ["TX"]["IO_def"] #WHY IS [INTERFACE]["IO_tYPE"] NOT ALLOWED ?????
-#           interface_IO_exp = []
-#
-#           for key,val in IO.iteritems():
-#             print key
-#             print val
-#            return interface_IO_exp   
+        IO = interfaces[interface]["IO"]
+        input_exp = "  input %s;" #input expression 
+        output_exp = "  output %s;" #output expression
 
+        for key, val in IO.iteritems():
+            if key == "input":
+                input_expression =  input_exp % val
+                print input_expression 
+            elif key == "output": 
+                output_expression = output_exp % val
+                print output_expression
+            else: 
+                print("error with config fiel IO declaration look for spelling mistakes")
+                sys.exit(1)
+        
+      
     ############### prints the module header definition ####################
 
     print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
 
     ############## prints the port_type defiinitions#############
 
-    print "//  --------------------input ports----------------------"
-    port_names_values = port_names.values()
-    #IO_parts = [create_IO_def(x) for x in port_names_values]   
-    port_def = ", ".join(port_names_values)
-    print input_exp % port_def
-    
-    print "//  --------------------output ports----------------------"
-    print output_exp % ", ".join(port_names_values)
+    print "//  --------------------input/output ports----------------------"
+    IO_parts = [create_IO_def(x) for x in port_names_values]   
 
     #############prints the port_data_type definitions###########
-    print "//  --------------------input data types------------------"
-    print "  wire up;"
-    print "  wire data[99:0];" ## TODO
-    print "//  --------------------output data types-----------------"
-    print "  reg [3:0] my_out; \n"
+    print "//  --------------------input/output data types------------------"
 
+    print "\n"
 
     ################### prints all the instansiations of the modules given the are ##############
     print "//  --------------------module instancces-----------------"

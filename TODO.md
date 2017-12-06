@@ -2,11 +2,11 @@
 
 ## 2017-27-11
 
-1. Add explicit net declarations, e.g. `wire [99:0] data` (numbers will depend on module count and interface definitions).
+1. Add explicit net declarations, e.g. `wire [99:0] data` (numbers will depend on module count and interface definitions). DONE
 
-2. Remove `port_types` from config file, and adjust code as necessary
+2. Remove `port_types` from config file, and adjust code as necessary DONE
 
-3. Add docstrings to all functions
+3. Add docstrings to all functions DONE
 
 4. Create README in markdown
 
