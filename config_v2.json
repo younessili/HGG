@@ -1,64 +1,64 @@
-{  
+{
    "module_name":"router",
    "dimensions":[3,3],
-   "port_names":{  
+   "port_names":{
       "north":"CLK",
       "south":"RESET",
       "east":"TX",
       "west":"RX",
       "north_west":"LOCAL"
    },
-   "interfaces":{  
-      "CLK":{  
-         "signals":{  
+   "interfaces":{
+      "CLK":{
+         "signals":{
             "clock":1
          },
-         "IO":{  
-            "input":"clock"
+         "IO":{
+            "input": ["clock"]
          }
       },
-      "RESET":{  
-         "signals":{  
+      "RESET":{
+         "signals":{
             "reset":1
          },
-         "IO":{  
-            "input":"reset"
+         "IO":{
+            "input": ["reset"]
          }
       },
-      "TX":{  
-         "signals":{  
+      "TX":{
+         "signals":{
             "tx_req":1,
             "tx_ack":4,
             "tx_data":16
          },
-         "IO":{  
-            "input":"tx_ack",
-            "output":"tx_req,tx_data"
+         "IO":{
+            "input": ["tx_ack"],
+            "output":["tx_req", "tx_data"]
          }
       },
-      "RX":{  
-         "signals":{  
+      "RX":{
+         "signals":{
             "rx_req":1,
             "rx_ack":1,
             "rx_data":16
          },
-         "IO":{  
-            "input":"rx_req,tx_req",
-            "output":"rx_ack"
+         "IO":{
+            "input": ["rx_req", "tx_req"],
+            "output": ["rx_ack"]
          }
       },
-      "LOCAL":{  
-         "signals":{  
+      "LOCAL":{
+         "signals":{
             "table_addr":4,
             "table_data":4
          },
-         "IO":{  
-            "input":"table_data",
-            "output":"table_addr"
+         "IO":{
+            "input": ["table_data"],
+            "output":["table_addr"]
          }
       }
    },
-   "assignments":{  
+   "assignments":{
       "north":"south",
       "east":"west"
    }
