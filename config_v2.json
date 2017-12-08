@@ -1,87 +1,65 @@
-{
-    "module_name": "router",
-    "dimensions": [3,3],
-    "port_names": 
-    {
-        "north": "CLK",
-        "south": "RESET",
-        "east": "TX",
-        "west": "RX",
-        "north_west": "LOCAL"
-    },
-    "interfaces": 
-    {
-        "CLK" :
-        {
-            "signals": 
-            {
-                "clock": 1
-            },
-            "IO": 
-            {
-                "input": "clock"
-            }
-
-        },
-        "RESET" :
-        {
-            "signals": 
-            {
-                "reset": 1
-            },
-            "IO": 
-            {
-                "input": "reset"
-            }
-        },
-        "TX" :
-        {
-            "signals": 
-            {
-                "tx_req": 1,
-                "tx_ack": 4,
-                "tx_data": 16
-            },
-            "IO": 
-            {
-                "input": "tx_ack",
-                "output": "tx_req,tx_data"
-            }
-        },
-
-        "RX": 
-        {
-            "signals": 
-            {
-                "rx_req": 1,
-                "rx_ack": 1,
-                "rx_data": 16
-            },
-            "IO": 
-            {
-                "input": "rx_req,tx_req",
-                "output": "rx_ack"
-            }
-        },
-
-        "LOCAL": 
-        {
-            "signals": 
-            {
-                "table_addr": 4,
-                "table_data": 4
-                
-            },
-            "IO": 
-            {
-                "input":"table_data",
-                "output":"table_addr"
-            }
-        }
-    },
-    "assignments":
-    {
-        "north":"south",
-        "east":"west"
-    }
+{  
+   "module_name":"router",
+   "dimensions":[3,3],
+   "port_names":{  
+      "north":"CLK",
+      "south":"RESET",
+      "east":"TX",
+      "west":"RX",
+      "north_west":"LOCAL"
+   },
+   "interfaces":{  
+      "CLK":{  
+         "signals":{  
+            "clock":1
+         },
+         "IO":{  
+            "input":"clock"
+         }
+      },
+      "RESET":{  
+         "signals":{  
+            "reset":1
+         },
+         "IO":{  
+            "input":"reset"
+         }
+      },
+      "TX":{  
+         "signals":{  
+            "tx_req":1,
+            "tx_ack":4,
+            "tx_data":16
+         },
+         "IO":{  
+            "input":"tx_ack",
+            "output":"tx_req,tx_data"
+         }
+      },
+      "RX":{  
+         "signals":{  
+            "rx_req":1,
+            "rx_ack":1,
+            "rx_data":16
+         },
+         "IO":{  
+            "input":"rx_req,tx_req",
+            "output":"rx_ack"
+         }
+      },
+      "LOCAL":{  
+         "signals":{  
+            "table_addr":4,
+            "table_data":4
+         },
+         "IO":{  
+            "input":"table_data",
+            "output":"table_addr"
+         }
+      }
+   },
+   "assignments":{  
+      "north":"south",
+      "east":"west"
+   }
 }

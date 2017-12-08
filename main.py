@@ -8,11 +8,9 @@ def load_json(file):
     """Return the json data by opening the file in read mode  """
     with open(file, "r") as json_data:
         return json.load(json_data)   #load the json file in read mode.
-
 #############################################################################
 def generate_code(config_file_path):
     """generate the module instances and assignments"""
-
 
     def check_input(config_file_path):
         """Return the main file elements by loadding the congfig file. do this after data validation    """
@@ -33,7 +31,6 @@ def generate_code(config_file_path):
             print('There was an error in the config file!')
             sys.exit(1)
         return (port_names,interfaces, module_name, width, height)  
-
 
      
     ######################list of segment definitions#############################
@@ -169,8 +166,6 @@ def main():
     """main function"""
     config_file_path = sys.argv[1]      #takes the input from the user and stores it in a variable.
     generate_code(config_file_path) #feed the "module name" entry in the json file to the generate code function
-
-
 ##############################################################################
 
 if __name__ == '__main__':

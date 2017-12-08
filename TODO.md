@@ -8,7 +8,7 @@
 
 3. Add docstrings to all functions DONE
 
-4. Create README in markdown
+4. Create README in markdown DONE
 
 - see this for example:
 
