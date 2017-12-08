@@ -39,19 +39,22 @@ correctly filling up the configuration file is the most important task for runni
 
 * enter the module dimensions this is an array of 2 integers `"dimensions":[3,3],` . This is *width* and *height* reespectivley. note that the SoC interfaces, usually have a regular square size, this means the dimensions are the same.
 
-* Next put in all the port names that each module would have. an example is as follows
-```"port_names":
+* Next put in all the port names that each module would have. Note not to change the port_names keys (*the left hand column*) this could cause the software to crash an example is as follows:
+
+```
+"port_names":
 	{  
       "north":"CLK",
       "south":"RESET",
       "east":"TX",
       "west":"RX",
       "north_west":"LOCAL"
-   },```
-Note not to change the port_names keys (*the left hand column*) this could cause the software to crash
+   },
+```
 
 * Define the port interfaces and input and output type. for multi bit wires such as a 15 down to 0 wire just write 16 infront of the interface you defined this will be interpretedd as a 16 bit wire. example:
-```"TX":
+```
+"TX":
 	{  
      "signals":
      {  
@@ -64,9 +67,8 @@ Note not to change the port_names keys (*the left hand column*) this could cause
         "input":"tx_ack",
         "output":"tx_req,tx_data"
      }
-    },```
-
-
+    },
+```
 ---
 ### Documentation
 
