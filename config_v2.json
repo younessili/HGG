@@ -1,13 +1,8 @@
 {
    "module_name":"router",
+
    "dimensions":[3,3],
-   "port_names":{
-      "north":"CLK",
-      "south":"RESET",
-      "east":"TX",
-      "west":"RX",
-      "north_west":"LOCAL"
-   },
+
    "interfaces":{
       "CLK":{
          "signals":{
@@ -43,7 +38,7 @@
             "rx_data":16
          },
          "IO":{
-            "input": ["rx_req", "tx_req"],
+            "input": ["rx_req", "rx_req"],
             "output": ["rx_ack"]
          }
       },
@@ -58,6 +53,7 @@
          }
       }
    },
+   
    "assignments":{
       "north":"south",
       "east":"west"
