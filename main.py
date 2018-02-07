@@ -24,25 +24,64 @@ def generate_code(config_file_path):
             module_name = config["module_name"]  #set the block name to the "module name" entry in the json files
             width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
             interfaces = config ["interfaces"]
+            global_variables = config ["global_variables"]
+            assignments = config["assignments"]
         except:
             print('There was an error in the config file!')
             sys.exit(1)
-        return (interfaces, module_name, width, height)
+        return (global_variables,interfaces, module_name, width, height,assignments)
 
 
     ######################list of segment definitions#############################
-    interfaces,module_name, width, height = check_input(config_file_path)
+    global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
-    mod_name= "module %s();" #module header defiinition
+    define_exp = "define %s %d"
+    mod_name= "module %s(%s);" #module header defiinition
     IO_type_exp = " %s [%d:%d] %s ;" #Input and output type expression
     input_exp = "  input %s;" #input expression
     output_exp = "  output %s;" #output expression
     str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
-    str_con = "     assign %s[%d] = %s[%d];"   #module connections#
+    assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
+    
 
 
-    ################## nested functions for module interface generation###########
+    def global_variable_def(var):
+        for key,val in var.iteritems():
+            if key == "MSB": 
+                return key,val
+            else:
+                print("No such global variable")
+                sys.exit(1)
+
+
+    def create_IO_def (interface):
+        """Return the input and output port definitions """
+
+        IO = interfaces[interface]["IO"]
+        val_exp_in = "%s %d"
+        val_exp_out = "%s"
+ 
+        for key, val in IO.iteritems(): #iteritems gets the key and value for each pair of entry in the IO of each interface.
+            if key == "input":
+                val_exp_in= ", ".join(val)
+                return val_exp_in 
+
+            elif key == "output": 
+                val_exp_out= ", ".join(val)
+                return val_exp_out
+
+
+        #return of value out of scope why?
+
+    
+        valid_keys = ["input", "output"]
+        valids = [key in valid_keys for key in IO.keys()] 
+        if not all(valids):
+            print("error with config file's IO declaration, look for spelling mistakes")
+            sys.exit(1)
+
+
     def create_port_def(mod_index, port_name, port_width):
         """return the argument for the module instances based on the number of data lines for each interface. """
 
@@ -78,69 +117,47 @@ def generate_code(config_file_path):
         else:
             interface_exp = "%s" % (interface)
             return interface_exp
-
-
-    def create_IO_def (interface):
-        """Return the input and output port definitions """
-
-        IO = interfaces[interface]["IO"]
-
-        for key, val in IO.iteritems():
-            if key == "input":
-                 input_expression =  input_exp % val
-                 print input_expression 
-            elif key == "output": 
-                output_expression = output_exp % val
-                print output_expression
-
-        valid_keys = ["input", "output"]
-        valids = [key in valid_keys for key in IO.keys()] 
-        if not all(valids):
-            print("error with config fiel IO declaration look for spelling mistakes")
-            sys.exit(1)
-
-
+  
+    
     def create_module_assigmnet():
         """create module assignments based on the user prefered assignments."""
-        print " \n //north to south connections"
-
-        port_north = port_names ["north"]
-        port_south = port_names ["south"]
-
-        shifts = [width*x for x in range(height-1)]
-        for row_shift in shifts:
-            print "\n    // Connector block (shift = %d):" % row_shift
-            for m in range(width):
-                n = row_shift + m
-                print str_con % (port_north, n, port_south, n+width)
-
-        print " \n //east to west connections"
-
-        port_west = port_names ["west"]
-        port_east = port_names ["east"]
-
-        column = [width*x for x in range(height)]
-
-        for row_shift in column:
-            print "\n    // Connector block (shift = %d):" % row_shift
-            for m in range(width-1):
-                n = row_shift + m
-                print str_con % (port_west, n, port_east, n+1)
+        print "//neighbours connections \n"
+        
+        assignments_keys = " ".join(assignments.keys())
+        assignments_values = " ".join(assignments.values())
+        
+        for i in range (width-1):
+            print "// Connector block (index = %d):" %i
+            print assignment_exp % (assignments_values, i, assignments_keys, i+1)
+            
 
 
     def create_block_code():
+
+        #########################define global variables########################
+
+        global_var_name,global_var_value= global_variable_def(global_variables)
+        print define_exp % (global_var_name,global_var_value)
+
         ###################prints the module header definition ####################
 
-        print mod_name % (module_name) #feed module name to the mod_name string as an argument to fill %s
+        IO_values= [create_IO_def(x) for x in interface_keys]
+        IO_string= ", ".join(IO_values)
+        print mod_name % (module_name,IO_string) #feed module name to the mod_name string as an argument to fill %s
 
         ###################prints the IO defiinitions#############
 
         print "//  --------------------input/output ports----------------------"
-        IO_parts = [create_IO_def(x) for x in interface_keys]
+        print IO_values  #how to remove the u preciding each term so i can extract indicidual ports. 
+
+        print input_exp % (IO_values[0])
+        print input_exp % (IO_values[3])
+        print input_exp % (IO_values[2])
+        print output_exp % (IO_values[1])
+
 
         ###################prints the port_data_type definitions###########
         print "//  --------------------input/output data types------------------"
-
         print "\n"
 
         ################### prints all the instansiations of the modules given the area ##############
@@ -155,7 +172,7 @@ def generate_code(config_file_path):
         ################### prints all the module assignments ##############
         print "\n//  --------------------module assignments-----------------"
 
-        #create_module_assigmnet()
+        create_module_assigmnet()
 
         ## module footer ##
         print "\n endmodule "

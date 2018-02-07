@@ -1,61 +1,61 @@
 {
-   "module_name":"router",
+   "module_name":"Pusher",
 
-   "dimensions":[3,3],
+   "dimensions":[8,1],
 
-   "interfaces":{
-      "CLK":{
-         "signals":{
+   "global_variables" :
+   {
+        "MSB":8
+   },
+   
+   "interfaces":
+    {
+      "CLK":
+      {
+         "signals":
+         {
             "clock":1
          },
-         "IO":{
+         "IO":
+         {
             "input": ["clock"]
          }
       },
-      "RESET":{
-         "signals":{
+      "RESET":
+      {
+         "signals":
+         {
             "reset":1
          },
-         "IO":{
+         "IO":
+         {
             "input": ["reset"]
          }
       },
-      "TX":{
-         "signals":{
-            "tx_req":1,
-            "tx_ack":4,
-            "tx_data":16
+      "IN":{
+         "signals":
+         {
+            "item_in":1
          },
-         "IO":{
-            "input": ["tx_ack"],
-            "output":["tx_req", "tx_data"]
+         "IO":
+         {
+            "input": ["item_in"]
          }
       },
-      "RX":{
-         "signals":{
-            "rx_req":1,
-            "rx_ack":1,
-            "rx_data":16
+      "OUT":
+      {
+         "signals":
+         {
+            "item_out":1
          },
-         "IO":{
-            "input": ["rx_req", "rx_req"],
-            "output": ["rx_ack"]
-         }
-      },
-      "LOCAL":{
-         "signals":{
-            "table_addr":4,
-            "table_data":4
-         },
-         "IO":{
-            "input": ["table_data"],
-            "output":["table_addr"]
+         "IO":
+         {
+            "output": ["item_out"]
          }
       }
-   },
-   
-   "assignments":{
-      "north":"south",
-      "east":"west"
+    },
+   "assignments":
+   {
+      "item_in":"item_out"
    }
 }
