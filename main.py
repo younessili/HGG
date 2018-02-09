@@ -35,11 +35,11 @@ def generate_code(config_file_path):
     ######################list of segment definitions#############################
     global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
-    define_exp = "define %s %d"
+    define_exp = "`define %s %d"
     mod_name= "module %s();" #module header defiinition
     IO_type_exp = " %s [%d:%d] %s ;" #Input and output type expression
-    input_exp = "  input %s;" #input expression
-    output_exp = "  output %s;" #output expression
+    input_exp = "  wire %s;" #input expression
+    output_exp = "  wire %s;" #output expression
     str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
@@ -150,12 +150,38 @@ def generate_code(config_file_path):
         ###################prints the IO defiinitions#############
 
         print "//  --------------------input/output ports----------------------"
-        print IO_values  #how to remove the u preciding each term so i can extract indicidual ports.
+        print "// %s" % IO_values  #how to remove the u preciding each term so i can extract indicidual ports.
 
-        print input_exp % (IO_values[0])
-        print input_exp % (IO_values[3])
-        print input_exp % (IO_values[2])
-        print output_exp % (IO_values[1])
+        # get_vec_signals = lambda interface: [item for item in interface["signals"].iteritems() if item[1]>0]
+
+        def get_vec_signals(interface):
+            """Given an inteface dictionary, return a list of (signal, bits)
+            where bits>0."""
+
+            results = []
+
+            for signal, bits in interface["signals"].iteritems():
+                if bits:
+                    results.append((signal, bits))
+
+            return results
+
+        # Create list of (list of (signal, bit) tups).
+
+        vec_signal_tups = [get_vec_signals(interface) for interface
+                           in interfaces.values()]
+
+        # Flatten vec_signal_tups
+
+        vec_signals = sum(vec_signal_tups, [])
+
+        # Print wire definition statements for array signals.
+
+        wire_exp = "wire %s [%d:0];"
+
+        for signal, bits in vec_signals:
+            total_bits = bits * area
+            print wire_exp % (signal, total_bits-1)
 
 
         ###################prints the port_data_type definitions###########
