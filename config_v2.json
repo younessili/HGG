@@ -7,14 +7,14 @@
    {
         "MSB":8
    },
-   
+
    "interfaces":
     {
       "CLK":
       {
          "signals":
          {
-            "clock":1
+            "clock":0
          },
          "IO":
          {
@@ -25,7 +25,7 @@
       {
          "signals":
          {
-            "reset":1
+            "reset":0
          },
          "IO":
          {

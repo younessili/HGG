@@ -43,12 +43,12 @@ def generate_code(config_file_path):
     str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
-    
+
 
 
     def global_variable_def(var):
         for key,val in var.iteritems():
-            if key == "MSB": 
+            if key == "MSB":
                 return key,val
             else:
                 print("No such global variable")
@@ -61,22 +61,22 @@ def generate_code(config_file_path):
         IO = interfaces[interface]["IO"]
         val_exp_in = "%s %d"
         val_exp_out = "%s"
- 
+
         for key, val in IO.iteritems(): #iteritems gets the key and value for each pair of entry in the IO of each interface.
             if key == "input":
                 val_exp_in= ", ".join(val)
-                return val_exp_in 
+                return val_exp_in
 
-            elif key == "output": 
+            elif key == "output":
                 val_exp_out= ", ".join(val)
                 return val_exp_out
 
 
         #return of value out of scope why?
 
-    
+
         valid_keys = ["input", "output"]
-        valids = [key in valid_keys for key in IO.keys()] 
+        valids = [key in valid_keys for key in IO.keys()]
         if not all(valids):
             print("error with config file's IO declaration, look for spelling mistakes")
             sys.exit(1)
@@ -91,7 +91,9 @@ def generate_code(config_file_path):
        ####need to get the start bit of the first itteration and the last bit of the last itteration for each different interface
 
 
-        if start_bit == end_bit:
+        if port_width == 0:
+            return port_name
+        elif start_bit == end_bit:
             one_bit_def = "%s [%d]" % (port_name, start_bit)
             return one_bit_def
         else:
@@ -117,19 +119,19 @@ def generate_code(config_file_path):
         else:
             interface_exp = "%s" % (interface)
             return interface_exp
-  
-    
+
+
     def create_module_assigmnet():
         """create module assignments based on the user prefered assignments."""
         print "//neighbours connections \n"
-        
+
         assignments_keys = " ".join(assignments.keys())
         assignments_values = " ".join(assignments.values())
-        
+
         for i in range (width-1):
             print "// Connector block (index = %d):" %i
             print assignment_exp % (assignments_values, i, assignments_keys, i+1)
-            
+
 
 
     def create_block_code():
@@ -148,7 +150,7 @@ def generate_code(config_file_path):
         ###################prints the IO defiinitions#############
 
         print "//  --------------------input/output ports----------------------"
-        print IO_values  #how to remove the u preciding each term so i can extract indicidual ports. 
+        print IO_values  #how to remove the u preciding each term so i can extract indicidual ports.
 
         print input_exp % (IO_values[0])
         print input_exp % (IO_values[3])
