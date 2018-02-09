@@ -36,7 +36,7 @@ def generate_code(config_file_path):
     global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
     define_exp = "define %s %d"
-    mod_name= "module %s(%s);" #module header defiinition
+    mod_name= "module %s();" #module header defiinition
     IO_type_exp = " %s [%d:%d] %s ;" #Input and output type expression
     input_exp = "  input %s;" #input expression
     output_exp = "  output %s;" #output expression
@@ -145,7 +145,7 @@ def generate_code(config_file_path):
 
         IO_values= [create_IO_def(x) for x in interface_keys]
         IO_string= ", ".join(IO_values)
-        print mod_name % (module_name,IO_string) #feed module name to the mod_name string as an argument to fill %s
+        print mod_name % module_name  # substitute module name
 
         ###################prints the IO defiinitions#############
 
