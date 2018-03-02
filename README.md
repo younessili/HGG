@@ -69,7 +69,18 @@ correctly filling up the configuration file is the most important task for runni
      }
     },
 ```
----
+
+##### requirements 
+Jinja 2
+Jinja2 is a full featured template engine for Python. It has full unicode support, an optional integrated sandboxed execution environment, widely used and BSD licensed.
+* sandboxed execution
+* powerful automatic HTML escaping system for XSS prevention
+* template inheritance
+* compiles down to the optimal python code just in time
+* optional ahead-of-time template compilation
+* easy to debug. Line numbers of exceptions directly point to the correct line in the template.
+* configurable syntax
+
 ### Documentation
 
 Add link to dessirtation here.

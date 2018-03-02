@@ -31,55 +31,25 @@ def generate_code(config_file_path):
             sys.exit(1)
         return (global_variables,interfaces, module_name, width, height,assignments)
 
-
     ######################list of segment definitions#############################
     global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
     define_exp = "`define %s %d"
     mod_name= "module %s();" #module header defiinition
-    IO_type_exp = " %s [%d:%d] %s ;" #Input and output type expression
-    input_exp = "  wire %s;" #input expression
-    output_exp = "  wire %s;" #output expression
     str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
+    wire_exp = "wire %s [%d:0];"
 
+    def get_vec_signals(interface):
+        """Given an inteface dictionary, return a list of (signal, bits)
+        where bits>0."""
 
-
-    def global_variable_def(var):
-        for key,val in var.iteritems():
-            if key == "MSB":
-                return key,val
-            else:
-                print("No such global variable")
-                sys.exit(1)
-
-
-    def create_IO_def (interface):
-        """Return the input and output port definitions """
-
-        IO = interfaces[interface]["IO"]
-        val_exp_in = "%s %d"
-        val_exp_out = "%s"
-
-        for key, val in IO.iteritems(): #iteritems gets the key and value for each pair of entry in the IO of each interface.
-            if key == "input":
-                val_exp_in= ", ".join(val)
-                return val_exp_in
-
-            elif key == "output":
-                val_exp_out= ", ".join(val)
-                return val_exp_out
-
-
-        #return of value out of scope why?
-
-
-        valid_keys = ["input", "output"]
-        valids = [key in valid_keys for key in IO.keys()]
-        if not all(valids):
-            print("error with config file's IO declaration, look for spelling mistakes")
-            sys.exit(1)
+        results = []
+        for signal, bits in interface["signals"].iteritems():
+            if bits:
+                results.append((signal, bits))
+        return results
 
 
     def create_port_def(mod_index, port_name, port_width):
@@ -133,60 +103,24 @@ def generate_code(config_file_path):
             print assignment_exp % (assignments_values, i, assignments_keys, i+1)
 
 
-
     def create_block_code():
-
-        #########################define global variables########################
-
-        global_var_name,global_var_value= global_variable_def(global_variables)
-        print define_exp % (global_var_name,global_var_value)
 
         ###################prints the module header definition ####################
 
-        IO_values= [create_IO_def(x) for x in interface_keys]
-        IO_string= ", ".join(IO_values)
-        print mod_name % module_name  # substitute module name
-
+        print mod_name  % module_name  # substitute module name 
+       
         ###################prints the IO defiinitions#############
 
-        print "//  --------------------input/output ports----------------------"
-        print "// %s" % IO_values  #how to remove the u preciding each term so i can extract indicidual ports.
-
-        # get_vec_signals = lambda interface: [item for item in interface["signals"].iteritems() if item[1]>0]
-
-        def get_vec_signals(interface):
-            """Given an inteface dictionary, return a list of (signal, bits)
-            where bits>0."""
-
-            results = []
-
-            for signal, bits in interface["signals"].iteritems():
-                if bits:
-                    results.append((signal, bits))
-
-            return results
-
         # Create list of (list of (signal, bit) tups).
-
-        vec_signal_tups = [get_vec_signals(interface) for interface
-                           in interfaces.values()]
+        vec_signal_tups = [get_vec_signals(interface) for interface in interfaces.values()]
 
         # Flatten vec_signal_tups
-
         vec_signals = sum(vec_signal_tups, [])
 
         # Print wire definition statements for array signals.
-
-        wire_exp = "wire %s [%d:0];"
-
         for signal, bits in vec_signals:
             total_bits = bits * area
             print wire_exp % (signal, total_bits-1)
-
-
-        ###################prints the port_data_type definitions###########
-        print "//  --------------------input/output data types------------------"
-        print "\n"
 
         ################### prints all the instansiations of the modules given the area ##############
         print "//  --------------------module instancces-----------------"
