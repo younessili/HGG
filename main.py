@@ -2,6 +2,7 @@
 
 import sys
 import json
+import jinja2
 
 #############################################################################
 def load_json(file):
@@ -93,22 +94,20 @@ def generate_code(config_file_path):
 
     def create_module_assigmnet():
         """create module assignments based on the user prefered assignments."""
-        print "//neighbours connections \n"
+        #print "//neighbours connections \n"
 
         assignments_keys = " ".join(assignments.keys())
         assignments_values = " ".join(assignments.values())
 
         for i in range (width-1):
-            print "// Connector block (index = %d):" %i
-            print assignment_exp % (assignments_values, i, assignments_keys, i+1)
+            #print "// Connector block (index = %d):" %i
+            return assignment_exp % (assignments_values, i, assignments_keys, i+1)
 
 
     def create_block_code():
 
-        ###################prints the module header definition ####################
 
-        print mod_name  % module_name  # substitute module name 
-       
+               
         ###################prints the IO defiinitions#############
 
         # Create list of (list of (signal, bit) tups).
@@ -120,7 +119,9 @@ def generate_code(config_file_path):
         # Print wire definition statements for array signals.
         for signal, bits in vec_signals:
             total_bits = bits * area
-            print wire_exp % (signal, total_bits-1)
+            wire_expression_list = wire_exp % (signal, total_bits-1)
+
+
 
         ################### prints all the instansiations of the modules given the area ##############
         print "//  --------------------module instancces-----------------"
@@ -128,17 +129,22 @@ def generate_code(config_file_path):
         for n in range(area):
             port_parts = [create_interface_def(n, x) for x in interface_keys]
             port_def = ", ".join(port_parts)
-            print str_def % (module_name, n, port_def)
+            module_instances_list= str_def % (module_name, n, port_def)
 
 
-        ################### prints all the module assignments ##############
-        print "\n//  --------------------module assignments-----------------"
-
-        create_module_assigmnet()
-
-        ## module footer ##
-        print "\n endmodule "
-
+        templateLoader = jinja2.FileSystemLoader( searchpath="/" )
+        templateEnv = jinja2.Environment( loader=templateLoader )
+        TEMPLATE_FILE = "/cygdrive/c/project/test_python/template.v"
+        template = templateEnv.get_template( TEMPLATE_FILE )
+        templateVars = {
+        "module_name" : module_name,
+        "wire_defs" : wire_expression_list, 
+        "instances" : str_def % (module_name, n, port_def),
+        "assignments":create_module_assigmnet()
+        }
+        outputText = template.render( templateVars )
+        print outputText
+    
 
     create_block_code()
 ##############################################################################
