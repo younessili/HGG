@@ -11,7 +11,7 @@ def load_json(file):
         return json.load(json_data)   #load the json file in read mode.
 #############################################################################
 def load_file(file):
-    """Return the file in read mode""" 
+    """Return the file in read mode"""
     with open(file, "r") as fid:
         return fid.read()
 #############################################################################
@@ -42,7 +42,7 @@ def generate_code(config_file_path):
     area = width * height     #Area of the module
     define_exp = "`define %s %d"
     mod_name= "module %s();" #module header defiinition
-    str_def = "  %s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
+    str_def = "%s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
     wire_exp = "wire %s [%d:0];"
@@ -108,14 +108,14 @@ def generate_code(config_file_path):
         for i in range (width-1):
             assignments_list = assignment_exp % (assignments_values, i, assignments_keys, i+1)
             return assignments_list
-        
+
 
 
 
     def create_block_code():
 
 
-               
+
         ###################prints the IO defiinitions#############
 
         # Create list of (list of (signal, bit) tups).
@@ -138,14 +138,14 @@ def generate_code(config_file_path):
 
 
         ################### prints all the code from the template file using jinja2 #############
-        
+
 
         template_file = "template.v"
         template_str = load_file(template_file)
         template = Template(template_str)
         content = {
             "module_name": module_name,
-            "wire_defs" : wire_expression_list, 
+            "wire_defs" : wire_expression_list,
             "instances" : instances_list,
             "assignments":create_module_assigmnet()
         }
@@ -161,13 +161,13 @@ def generate_code(config_file_path):
 
         templateVars = {
         "module_name" : module_name,
-        "wire_defs" : wire_expression_list, 
+        "wire_defs" : wire_expression_list,
         "instances" : module_instances_list,
         "assignments":create_module_assigmnet()
         }
         outputText = template.render( templateVars )
         print outputText"""
-    
+
 
     create_block_code()
 ##############################################################################

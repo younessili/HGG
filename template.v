@@ -9,7 +9,9 @@ module {{ module_name }}();
 
 //  --------------------module instancces-----------------
 
-{{instances}}
+{% for item in instances %}
+	{{ item }}
+{%- endfor %}
 
 //  --------------------module assignments-----------------
 
