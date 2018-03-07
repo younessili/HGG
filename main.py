@@ -2,13 +2,18 @@
 
 import sys
 import json
-import jinja2
+from jinja2 import Template
 
 #############################################################################
 def load_json(file):
-    """Return the json data by opening the file in read mode  """
+    """Return the json object by loading the json file  """
     with open(file, "r") as json_data:
         return json.load(json_data)   #load the json file in read mode.
+#############################################################################
+def load_file(file):
+    """Return the file in read mode""" 
+    with open(file, "r") as fid:
+        return fid.read()
 #############################################################################
 def generate_code(config_file_path):
     """generate the module instances and assignments"""
@@ -99,9 +104,12 @@ def generate_code(config_file_path):
         assignments_keys = " ".join(assignments.keys())
         assignments_values = " ".join(assignments.values())
 
+        assignments_list =[]
         for i in range (width-1):
-            #print "// Connector block (index = %d):" %i
-            return assignment_exp % (assignments_values, i, assignments_keys, i+1)
+            assignments_list = assignment_exp % (assignments_values, i, assignments_keys, i+1)
+            return assignments_list
+        
+
 
 
     def create_block_code():
@@ -117,33 +125,48 @@ def generate_code(config_file_path):
         vec_signals = sum(vec_signal_tups, [])
 
         # Print wire definition statements for array signals.
+        #wire_expression_list = []
         for signal, bits in vec_signals:
             total_bits = bits * area
-            wire_expression_list = wire_exp % (signal, total_bits-1)
+            wire_expression_list = (wire_exp % (signal, total_bits-1))
 
-
-
-        ################### prints all the instansiations of the modules given the area ##############
-        print "//  --------------------module instancces-----------------"
-
+        instances_list =[]
         for n in range(area):
             port_parts = [create_interface_def(n, x) for x in interface_keys]
             port_def = ", ".join(port_parts)
-            module_instances_list= str_def % (module_name, n, port_def)
+            instances_list.append(str_def % (module_name, n, port_def))
 
 
-        templateLoader = jinja2.FileSystemLoader( searchpath="/" )
+        ################### prints all the code from the template file using jinja2 #############
+        
+
+        template_file = "template.v"
+        template_str = load_file(template_file)
+        template = Template(template_str)
+        content = {
+            "module_name": module_name,
+            "wire_defs" : wire_expression_list, 
+            "instances" : instances_list,
+            "assignments":create_module_assigmnet()
+        }
+        print template.render(**content)
+
+
+
+
+    """    templateLoader = jinja2.FileSystemLoader( searchpath="/" )
         templateEnv = jinja2.Environment( loader=templateLoader )
         TEMPLATE_FILE = "/cygdrive/c/project/test_python/template.v"
         template = templateEnv.get_template( TEMPLATE_FILE )
+
         templateVars = {
         "module_name" : module_name,
         "wire_defs" : wire_expression_list, 
-        "instances" : str_def % (module_name, n, port_def),
+        "instances" : module_instances_list,
         "assignments":create_module_assigmnet()
         }
         outputText = template.render( templateVars )
-        print outputText
+        print outputText"""
     
 
     create_block_code()
