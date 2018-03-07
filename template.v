@@ -1,6 +1,11 @@
-module {{ module_name }}();
+module {{ module_name }}(clk, reset, data_in, data_out);
 
-// some code to generate clock
+	input clk;
+	input reset;
+	input [7:0] data_in;
+	output [7:0] data_out;
+
+	assign data_out = 0; // for now
 
 
 //  --------------------input/output data types-----------
@@ -15,6 +20,9 @@ module {{ module_name }}();
 
 //  --------------------module assignments-----------------
 
-{{ assignments }}
+{% for item in assignments %}
+	{{ item }}
+{%- endfor %}
+
 
 endmodule

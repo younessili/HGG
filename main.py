@@ -2,7 +2,21 @@
 
 import sys
 import json
+import docopt
 from jinja2 import Template
+
+
+usage = """
+HGG version 0.1
+
+Usage:
+  hgg [--quiet] <config> <template>
+
+Options:
+  --quiet -q  Suppress printing information messages.
+  --version -v  Print version.
+
+"""
 
 #############################################################################
 def load_json(file):
@@ -15,33 +29,31 @@ def load_file(file):
     with open(file, "r") as fid:
         return fid.read()
 #############################################################################
-def generate_code(config_file_path):
+def check_input(config_file_path):
+    """Return the main file elements by loadding the congfig file. do this after data validation    """
+
+    try:
+         config = load_json(config_file_path)
+    except IOError:
+        print('There was No such file to open!')
+        sys.exit(1)      #try loading the file if there is an IO error stop and print error message
+    try:
+        module_name = config["module_name"]  #set the block name to the "module name" entry in the json files
+        width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
+        interfaces = config ["interfaces"]
+        global_variables = config ["global_variables"]
+        assignments = config["assignments"]
+    except:
+        print('There was an error in the config file!')
+        sys.exit(1)
+    return (global_variables,interfaces, module_name, width, height,assignments)
+#############################################################################
+def generate_code(config_file_path, template_file):
     """generate the module instances and assignments"""
-
-    def check_input(config_file_path):
-        """Return the main file elements by loadding the congfig file. do this after data validation    """
-
-        try:
-             config = load_json(config_file_path)
-        except IOError:
-            print('There was No such file to open!')
-            sys.exit(1)      #try loading the file if there is an IO error stop and print error message
-        try:
-            module_name = config["module_name"]  #set the block name to the "module name" entry in the json files
-            width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
-            interfaces = config ["interfaces"]
-            global_variables = config ["global_variables"]
-            assignments = config["assignments"]
-        except:
-            print('There was an error in the config file!')
-            sys.exit(1)
-        return (global_variables,interfaces, module_name, width, height,assignments)
 
     ######################list of segment definitions#############################
     global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
-    define_exp = "`define %s %d"
-    mod_name= "module %s();" #module header defiinition
     str_def = "%s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
@@ -84,7 +96,6 @@ def generate_code(config_file_path):
 
             signals = interfaces[interface]["signals"]
 
-
             indexed_keys = []
             for key, val in signals.iteritems():
                 indexed_key = create_port_def(mod_index, key, val)
@@ -101,15 +112,15 @@ def generate_code(config_file_path):
         """create module assignments based on the user prefered assignments."""
         #print "//neighbours connections \n"
 
-        assignments_keys = " ".join(assignments.keys())
-        assignments_values = " ".join(assignments.values())
-
         assignments_list =[]
-        for i in range (width-1):
-            assignments_list = assignment_exp % (assignments_values, i, assignments_keys, i+1)
-            return assignments_list
 
+        for key, val in assignments.iteritems():
 
+            for i in range (width-1):
+                item = assignment_exp % (val, i, key, i+1)
+                assignments_list.append(item)
+
+        return assignments_list
 
 
     def create_block_code():
@@ -140,7 +151,6 @@ def generate_code(config_file_path):
         ################### prints all the code from the template file using jinja2 #############
 
 
-        template_file = "template.v"
         template_str = load_file(template_file)
         template = Template(template_str)
         content = {
@@ -170,11 +180,16 @@ def generate_code(config_file_path):
 
 
     create_block_code()
+
 ##############################################################################
 def main():
     """main function"""
+    args = docopt.docopt(usage, version="0.1")
     config_file_path = sys.argv[1]      #takes the input from the user and stores it in a variable.
-    generate_code(config_file_path) #feed the "module name" entry in the json file to the generate code function
+    config_file_path = args["<config>"]
+    template_file = args["<template>"]
+    generate_code(config_file_path, template_file)
+    # generate_code(config_file_path) #feed the "module name" entry in the json file to the generate code function
 ##############################################################################
 
 if __name__ == '__main__':
