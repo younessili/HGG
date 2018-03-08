@@ -1,5 +1,5 @@
 run: prepare_output
-	@ ./main.py config_v2.json \
+	@ ./main.py config_v2.json template.v\
 	>> output.log 2>&1
 
 testbench:

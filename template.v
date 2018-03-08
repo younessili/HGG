@@ -1,4 +1,4 @@
-module {{ module_name }}(clk, reset, data_in, data_out);
+module {{ module_name }}(, clk,reset, data_in, data_out);
 
 	input clk;
 	input reset;
@@ -7,10 +7,10 @@ module {{ module_name }}(clk, reset, data_in, data_out);
 
 	assign data_out = 0; // for now
 
-
 //  --------------------input/output data types-----------
-
-{{ wire_defs }}
+{% for item in wire_defs %}
+	{{ item }}
+{%- endfor %}
 
 //  --------------------module instancces-----------------
 

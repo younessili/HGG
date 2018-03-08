@@ -5,7 +5,6 @@ import json
 import docopt
 from jinja2 import Template
 
-
 usage = """
 HGG version 0.1
 
@@ -41,20 +40,19 @@ def check_input(config_file_path):
         module_name = config["module_name"]  #set the block name to the "module name" entry in the json files
         width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
         interfaces = config ["interfaces"]
-        global_variables = config ["global_variables"]
         assignments = config["assignments"]
     except:
         print('There was an error in the config file!')
         sys.exit(1)
-    return (global_variables,interfaces, module_name, width, height,assignments)
+    return (interfaces, module_name, width, height,assignments)
 #############################################################################
 def generate_code(config_file_path, template_file):
     """generate the module instances and assignments"""
 
     ######################list of segment definitions#############################
-    global_variables,interfaces,module_name, width, height,assignments = check_input(config_file_path)
+    interfaces,module_name, width, height,assignments = check_input(config_file_path)
     area = width * height     #Area of the module
-    str_def = "%s r%d (%s);"  #module definition here (%s) is %s [%d], %s[%d], %s[%d], %s[%d]
+    str_def = "%s r%d (%s);"  #module definition here (%s) is %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
     interface_keys = interfaces.keys()
     wire_exp = "wire %s [%d:0];"
@@ -124,10 +122,7 @@ def generate_code(config_file_path, template_file):
 
 
     def create_block_code():
-
-
-
-        ###################prints the IO defiinitions#############
+        """populat jinja2 template by calling the functions above."""
 
         # Create list of (list of (signal, bit) tups).
         vec_signal_tups = [get_vec_signals(interface) for interface in interfaces.values()]
@@ -136,21 +131,17 @@ def generate_code(config_file_path, template_file):
         vec_signals = sum(vec_signal_tups, [])
 
         # Print wire definition statements for array signals.
-        #wire_expression_list = []
+        wire_expression_list = []
         for signal, bits in vec_signals:
             total_bits = bits * area
-            wire_expression_list = (wire_exp % (signal, total_bits-1))
+            wire_expression_list.append(wire_exp % (signal, total_bits-1))
 
         instances_list =[]
         for n in range(area):
             port_parts = [create_interface_def(n, x) for x in interface_keys]
             port_def = ", ".join(port_parts)
             instances_list.append(str_def % (module_name, n, port_def))
-
-
-        ################### prints all the code from the template file using jinja2 #############
-
-
+       
         template_str = load_file(template_file)
         template = Template(template_str)
         content = {
@@ -160,23 +151,6 @@ def generate_code(config_file_path, template_file):
             "assignments":create_module_assigmnet()
         }
         print template.render(**content)
-
-
-
-
-    """    templateLoader = jinja2.FileSystemLoader( searchpath="/" )
-        templateEnv = jinja2.Environment( loader=templateLoader )
-        TEMPLATE_FILE = "/cygdrive/c/project/test_python/template.v"
-        template = templateEnv.get_template( TEMPLATE_FILE )
-
-        templateVars = {
-        "module_name" : module_name,
-        "wire_defs" : wire_expression_list,
-        "instances" : module_instances_list,
-        "assignments":create_module_assigmnet()
-        }
-        outputText = template.render( templateVars )
-        print outputText"""
 
 
     create_block_code()
@@ -189,7 +163,6 @@ def main():
     config_file_path = args["<config>"]
     template_file = args["<template>"]
     generate_code(config_file_path, template_file)
-    # generate_code(config_file_path) #feed the "module name" entry in the json file to the generate code function
 ##############################################################################
 
 if __name__ == '__main__':

@@ -4,9 +4,6 @@
     8,
     1
   ],
-  "global_variables":{
-    "MSB":8
-  },
   "interfaces":{
     "CLK":{
       "signals":{
