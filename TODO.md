@@ -21,11 +21,11 @@ https://github.com/matiassingers/awesome-readme
 ## 2018-03-07
 
 1. Fix issue with template (printing array instead of invidivual items as
-lines) = by using Jinja2 for loops
+lines) = by using Jinja2 for loops DONE
 
 2. Create two directories `templates` and `config`, and place template and
 config files inside (giving them meaningful names, like `pusher` and
-`arbiter`).
+`arbiter`). DONE
 
 3. (for Ghaith): complete simulation testbench
 

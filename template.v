@@ -1,4 +1,4 @@
-module {{ module_name }}(, clk,reset, data_in, data_out);
+module {{ module_name }}(clk,reset, data_in, data_out);
 
 	input clk;
 	input reset;
