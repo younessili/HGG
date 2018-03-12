@@ -17,40 +17,45 @@ Options:
 
 """
 
-#############################################################################
+##############################################################################
 def load_json(file):
     """Return the json object by loading the json file  """
     with open(file, "r") as json_data:
         return json.load(json_data)   #load the json file in read mode.
-#############################################################################
+##############################################################################
 def load_file(file):
     """Return the file in read mode"""
     with open(file, "r") as fid:
         return fid.read()
-#############################################################################
+##############################################################################
 def check_input(config_file_path):
-    """Return the main file elements by loadding the congfig file. do this after data validation    """
+    """Return the main file elements by loadding the congfig file. 
+    do this after data validation    """
 
+    #try loading the file if there is an IO error stop and print error message
     try:
          config = load_json(config_file_path)
     except IOError:
         print('There was No such file to open!')
-        sys.exit(1)      #try loading the file if there is an IO error stop and print error message
+        sys.exit(1)      
     try:
-        module_name = config["module_name"]  #set the block name to the "module name" entry in the json files
-        width, height = map(int, config["dimensions"]) #in the config file set width and height to the 1st and 2nd index of the array "dimensions"
+        #set the block name to the "module name" entry in the json files
+        module_name = config["module_name"]  
+        width, height = map(int, config["dimensions"]) 
         interfaces = config ["interfaces"]
         assignments = config["assignments"]
     except:
         print('There was an error in the config file!')
         sys.exit(1)
     return (interfaces, module_name, width, height,assignments)
-#############################################################################
+##############################################################################
 def generate_code(config_file_path, template_file):
     """generate the module instances and assignments"""
 
-    ######################list of segment definitions#############################
-    interfaces,module_name, width, height,assignments = check_input(config_file_path)
+    ######################list of segment definitions#########################
+    (interfaces,module_name, 
+    width, height,assignments) = check_input(config_file_path)
+    
     area = width * height     #Area of the module
     str_def = "%s r%d (%s);"  #module definition here (%s) is %s[%d]
     assignment_exp = "%s[%d]<=%s[%d];"
@@ -67,15 +72,12 @@ def generate_code(config_file_path, template_file):
                 results.append((signal, bits))
         return results
 
-
     def create_port_def(mod_index, port_name, port_width):
-        """return the argument for the module instances based on the number of data lines for each interface. """
+        """return the argument for the module instances
+         based on the number of data lines for each interface. """
 
         start_bit = port_width * mod_index
         end_bit = (port_width * (mod_index+1) )- 1
-
-       ####need to get the start bit of the first itteration and the last bit of the last itteration for each different interface
-
 
         if port_width == 0:
             return port_name
@@ -86,9 +88,9 @@ def generate_code(config_file_path, template_file):
             multi_bit_def ="%s[%d:%d]" % (port_name, end_bit, start_bit)
             return multi_bit_def
 
-
     def create_interface_def(mod_index, interface):
-        """Return a Verilog port declaration string representing the interface."""
+        """Return a Verilog port declaration string 
+        representing the interface."""
 
         if interface in interfaces:
 
@@ -105,11 +107,9 @@ def generate_code(config_file_path, template_file):
             interface_exp = "%s" % (interface)
             return interface_exp
 
-
     def create_module_assigmnet():
-        """create module assignments based on the user prefered assignments."""
-        #print "//neighbours connections \n"
-
+        """create module assignments based on the user assignments."""
+        
         assignments_list =[]
 
         for key, val in assignments.iteritems():
@@ -117,15 +117,14 @@ def generate_code(config_file_path, template_file):
             for i in range (width-1):
                 item = assignment_exp % (val, i, key, i+1)
                 assignments_list.append(item)
-
         return assignments_list
-
 
     def create_block_code():
         """populat jinja2 template by calling the functions above."""
 
         # Create list of (list of (signal, bit) tups).
-        vec_signal_tups = [get_vec_signals(interface) for interface in interfaces.values()]
+        vec_signal_tups = [get_vec_signals(interface) 
+                for interface in interfaces.values()]
 
         # Flatten vec_signal_tups
         vec_signals = sum(vec_signal_tups, [])
@@ -152,14 +151,14 @@ def generate_code(config_file_path, template_file):
         }
         print template.render(**content)
 
-
     create_block_code()
 
 ##############################################################################
 def main():
     """main function"""
     args = docopt.docopt(usage, version="0.1")
-    config_file_path = sys.argv[1]      #takes the input from the user and stores it in a variable.
+    #takes the input from the user and stores it in a variable.
+    config_file_path = sys.argv[1]      
     config_file_path = args["<config>"]
     template_file = args["<template>"]
     generate_code(config_file_path, template_file)
