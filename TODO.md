@@ -33,3 +33,41 @@ config files inside (giving them meaningful names, like `pusher` and
 
 https://www.python.org/dev/peps/pep-0008/
 https://www.python.org/dev/peps/pep-0020/
+
+# Plan for Literature Review
+
+## General organization of literature review:
+
+1. The need for HDL code generation tools in general (reference systems such
+as SpiNNaker and POETS)
+
+2. Different types of code generation tool:
+
+  - Tools that instantiate and connect components (e.g. SOPC) [this is the sub-category of code generation tools that HGG fit under]. Other examples of tools in this category are "Xilinx System Generator", and Matlab's Code HDL Coder.
+
+  Have a look at: https://www.nutaq.com/matlab-hdl-coder-xilinx-system-generator
+
+  and: https://www.xilinx.com/products/design-tools/vivado/integration/sysgen.html
+
+  - Tools that perform language translations (e.g. high-level synthesis)
+
+Light reads on System on Chip (SoC):
+
+https://en.m.wikipedia.org/wiki/System_on_a_chip
+
+and on Networks on Chip (NoC):
+
+http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1652898
+
+https://link.springer.com/chapter/10.2991/978-94-91216-92-3_5
+
+## Altera Quartus SOPC Builder
+
+This is a tool for generating system HDL by draggina and dropping components
+in a GUI. It is similar to HGG in the sense that it enables hardware designers
+to compose building clocks into larger systems.
+
+Write a paragraph or two providing an overview of this tool, taking ideas from
+say the first two pages of the tool's documentation, here:
+
+https://www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/ug/ug_sopc_builder.pdf
