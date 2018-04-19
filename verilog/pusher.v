@@ -9,21 +9,21 @@ module pusher (clk, reset, item_in, item_out);
 
 	assign item_out = item;
 
-	 reg [`BITS-1:0] item;
+	reg [`BITS-1:0] item;
 
-	 always @(posedge clk or posedge reset) begin
+	always @(posedge clk or posedge reset) begin
 
-	 	if (reset) begin
+		if (reset) begin
 
-	 		item <= 0;
+			item <= 0;
 
-	 	end else begin
+		end else begin
 
-	 		item <= item_in;
-	 		$display("I latched an item: %d", item_in);
+			item <= item_in;
+			$display("I latched an item: %d", item_in);
 
-	 	end
+		end
 
-	 end
+	end
 
 endmodule

@@ -29,7 +29,7 @@ def load_file(file):
         return fid.read()
 ##############################################################################
 def check_input(config_file_path):
-    """Return the main file elements by loadding the congfig file. 
+    """Return the main file elements by loadding the congfig file.
     do this after data validation    """
 
     #try loading the file if there is an IO error stop and print error message
@@ -37,11 +37,11 @@ def check_input(config_file_path):
          config = load_json(config_file_path)
     except IOError:
         print('There was No such file to open!')
-        sys.exit(1)      
+        sys.exit(1)
     try:
         #set the block name to the "module name" entry in the json files
-        module_name = config["module_name"]  
-        width, height = map(int, config["dimensions"]) 
+        module_name = config["module_name"]
+        width, height = map(int, config["dimensions"])
         interfaces = config ["interfaces"]
         assignments = config["assignments"]
     except:
@@ -53,12 +53,12 @@ def generate_code(config_file_path, template_file):
     """generate the module instances and assignments"""
 
     ######################list of segment definitions#########################
-    (interfaces,module_name, 
+    (interfaces,module_name,
     width, height,assignments) = check_input(config_file_path)
-    
+
     area = width * height     #Area of the module
     str_def = "%s r%d (%s);"  #module definition here (%s) is %s[%d]
-    assignment_exp = "%s[%d]<=%s[%d];"
+    assignment_exp = "%s[%d:%d] <= %s[%d:%d];"
     interface_keys = interfaces.keys()
     wire_exp = "wire %s [%d:0];"
 
@@ -89,7 +89,7 @@ def generate_code(config_file_path, template_file):
             return multi_bit_def
 
     def create_interface_def(mod_index, interface):
-        """Return a Verilog port declaration string 
+        """Return a Verilog port declaration string
         representing the interface."""
 
         if interface in interfaces:
@@ -109,21 +109,30 @@ def generate_code(config_file_path, template_file):
 
     def create_module_assigmnet():
         """create module assignments based on the user assignments."""
-        
+
         assignments_list =[]
 
         for key, val in assignments.iteritems():
 
             for i in range (width-1):
-                item = assignment_exp % (val, i, key, i+1)
+                in_start = (i+1) * width
+                in_finish = (i+2) * width - 1
+
+                out_start = i * width
+                out_finish = (i+1) * width - 1
+
+                item = assignment_exp % (
+                    val, in_finish, in_start, key, out_finish, out_start)
+
                 assignments_list.append(item)
+
         return assignments_list
 
     def create_block_code():
         """populat jinja2 template by calling the functions above."""
 
         # Create list of (list of (signal, bit) tups).
-        vec_signal_tups = [get_vec_signals(interface) 
+        vec_signal_tups = [get_vec_signals(interface)
                 for interface in interfaces.values()]
 
         # Flatten vec_signal_tups
@@ -140,7 +149,7 @@ def generate_code(config_file_path, template_file):
             port_parts = [create_interface_def(n, x) for x in interface_keys]
             port_def = ", ".join(port_parts)
             instances_list.append(str_def % (module_name, n, port_def))
-       
+
         template_str = load_file(template_file)
         template = Template(template_str)
         content = {
@@ -158,7 +167,7 @@ def main():
     """main function"""
     args = docopt.docopt(usage, version="0.1")
     #takes the input from the user and stores it in a variable.
-    config_file_path = sys.argv[1]      
+    config_file_path = sys.argv[1]
     config_file_path = args["<config>"]
     template_file = args["<template>"]
     generate_code(config_file_path, template_file)
