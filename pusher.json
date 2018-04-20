@@ -7,11 +7,11 @@
     "interfaces": {
         "CLK": {
             "signals": {
-                "clock": 0
+                "clk": 0
             },
             "IO": {
                 "input": [
-                    "clock"
+                    "clk"
                 ]
             }
         },
@@ -27,7 +27,7 @@
         },
         "IN": {
             "signals": {
-                "item_in": 1
+                "item_in": 8
             },
             "IO": {
                 "input": [
@@ -37,7 +37,7 @@
         },
         "OUT": {
             "signals": {
-                "item_out": 1
+                "item_out": 8
             },
             "IO": {
                 "output": [

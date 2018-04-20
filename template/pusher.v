@@ -1,4 +1,11 @@
-module {{ module_name }}(clk,reset, data_in, data_out);
+`include "pusher.v"
+
+module top(clock, reset, data_in, data_out);
+
+	input clock;
+	input reset;
+	input [7:0] data_in;
+	output [7:0] data_out;
 
 //  --------------------input/output data types-----------
 {% for item in wire_defs %}
@@ -13,9 +20,11 @@ module {{ module_name }}(clk,reset, data_in, data_out);
 
 //  --------------------module assignments-----------------
 
-{% for item in assignments %}
+	assign item_in[7:0] = data_in;
+{%- for item in assignments %}
 	{{ item }}
 {%- endfor %}
+
 
 
 endmodule

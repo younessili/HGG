@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "pusher.v"
+`include "top.v"
 
 module testbench();
 
@@ -30,6 +30,6 @@ module testbench();
 
 	wire [7:0] item_out;
 
-	pusher p1 (clk, reset, item_in, item_out);
+	top top1 (clk, reset, item_in, item_out);
 
 endmodule

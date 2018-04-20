@@ -1,8 +1,10 @@
 `define BITS 8
 
-module pusher (clk, reset, item_in, item_out);
+module pusher(reset, item_out, item_in, clock);
 
-	input clk;
+	localparam id = 0;
+
+	input clock;
 	input reset;
 	input [`BITS-1:0] item_in;
 	output [`BITS-1:0] item_out;
@@ -11,7 +13,7 @@ module pusher (clk, reset, item_in, item_out);
 
 	reg [`BITS-1:0] item;
 
-	always @(posedge clk or posedge reset) begin
+	always @(posedge clock or posedge reset) begin
 
 		if (reset) begin
 
@@ -20,7 +22,7 @@ module pusher (clk, reset, item_in, item_out);
 		end else begin
 
 			item <= item_in;
-			$display("I latched an item: %d", item_in);
+			$display("(pusher %d): I latched item %d", id, item_in);
 
 		end
 

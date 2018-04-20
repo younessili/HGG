@@ -57,10 +57,10 @@ def generate_code(config_file_path, template_file):
     width, height,assignments) = check_input(config_file_path)
 
     area = width * height     #Area of the module
-    str_def = "%s r%d (%s);"  #module definition here (%s) is %s[%d]
-    assignment_exp = "%s[%d:%d] <= %s[%d:%d];"
+    str_def = "%s #(.id(%d)) r%d (%s);"  #module definition here (%s) is %s[%d]
+    assignment_exp = "assign %s[%d:%d] = %s[%d:%d];"
     interface_keys = interfaces.keys()
-    wire_exp = "wire %s [%d:0];"
+    wire_exp = "wire [%d:0] %s;"
 
     def get_vec_signals(interface):
         """Given an inteface dictionary, return a list of (signal, bits)
@@ -114,12 +114,14 @@ def generate_code(config_file_path, template_file):
 
         for key, val in assignments.iteritems():
 
-            for i in range (width-1):
-                in_start = (i+1) * width
-                in_finish = (i+2) * width - 1
+            item_bits = interfaces["IN"]["signals"][val]
 
-                out_start = i * width
-                out_finish = (i+1) * width - 1
+            for i in range (width-1):
+                in_start = (i+1) * item_bits
+                in_finish = (i+2) * item_bits - 1
+
+                out_start = i * item_bits
+                out_finish = (i+1) * item_bits - 1
 
                 item = assignment_exp % (
                     val, in_finish, in_start, key, out_finish, out_start)
@@ -142,13 +144,13 @@ def generate_code(config_file_path, template_file):
         wire_expression_list = []
         for signal, bits in vec_signals:
             total_bits = bits * area
-            wire_expression_list.append(wire_exp % (signal, total_bits-1))
+            wire_expression_list.append(wire_exp % (total_bits-1, signal))
 
         instances_list =[]
         for n in range(area):
             port_parts = [create_interface_def(n, x) for x in interface_keys]
             port_def = ", ".join(port_parts)
-            instances_list.append(str_def % (module_name, n, port_def))
+            instances_list.append(str_def % (module_name, n, n, port_def))
 
         template_str = load_file(template_file)
         template = Template(template_str)
