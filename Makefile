@@ -1,5 +1,5 @@
 run: prepare_output
-	@ ./main.py pusher.json template.v\
+	@ ./main.py config/pusher.json template/pusher.v \
 	>> output.log 2>&1
 
 testbench:
