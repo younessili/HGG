@@ -55,9 +55,8 @@ def generate_code(config_file_path, template_file):
     ######################list of segment definitions#########################
     (interfaces,module_name,
     width, height,assignments) = check_input(config_file_path)
-
     area = width * height     #Area of the module
-    str_def = "%s #(.id(%d)) r%d (%s);"  #module definition here (%s) is %s[%d]
+    str_def = "%s #(.id(%d)) r%d (%s);"  #instances definition here (%s) is %s[%d]
     assignment_exp = "assign %s[%d:%d] = %s[%d:%d];"
     interface_keys = interfaces.keys()
     wire_exp = "wire [%d:0] %s;"
@@ -163,7 +162,6 @@ def generate_code(config_file_path, template_file):
         print template.render(**content)
 
     create_block_code()
-
 ##############################################################################
 def main():
     """main function"""
