@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import json
@@ -44,7 +44,7 @@ def check_input(config_file_path):
         width, height = map(int, config["dimensions"])
         interfaces = config ["interfaces"]
         assignments = config["assignments"]
-    except:
+    except Exception:
         print('There was an error in the config file!')
         sys.exit(1)
     return (interfaces, module_name, width, height,assignments)
@@ -66,7 +66,7 @@ def generate_code(config_file_path, template_file):
         where bits>0."""
 
         results = []
-        for signal, bits in interface["signals"].iteritems():
+        for signal, bits in interface["signals"].items():
             if bits:
                 results.append((signal, bits))
         return results
@@ -96,7 +96,7 @@ def generate_code(config_file_path, template_file):
             signals = interfaces[interface]["signals"]
 
             indexed_keys = []
-            for key, val in signals.iteritems():
+            for key, val in signals.items():
                 indexed_key = create_port_def(mod_index, key, val)
                 indexed_keys.append(indexed_key)
                 indexed_keys_exp = ", ".join(indexed_keys)
@@ -111,7 +111,7 @@ def generate_code(config_file_path, template_file):
 
         assignments_list =[]
 
-        for key, val in assignments.iteritems():
+        for key, val in assignments.items():
 
             item_bits = interfaces["IN"]["signals"][val]
 
@@ -159,7 +159,7 @@ def generate_code(config_file_path, template_file):
             "instances" : instances_list,
             "assignments":create_module_assigmnet()
         }
-        print template.render(**content)
+        print(template.render(**content))
 
     create_block_code()
 ##############################################################################
